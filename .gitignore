@@ -10,6 +10,56 @@ target/
 # IDE/editor
 .vscode/
 .idea/
+*.code-workspace
 
 # Trae workspace
 .trae/
+
+# Cargo lock for binaries (keep for libraries)
+Cargo.lock
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Binary and executable files
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+*.o
+*.obj
+*.pdb
+
+# Large media files
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.mp3
+*.wav
+*.flac
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+*.iso
+*.dmg
+
+# Log files
+*.log
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment and secrets
+.env
+.env.local
+*.key
+*.pem
