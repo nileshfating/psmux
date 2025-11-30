@@ -104,7 +104,7 @@ fn get_program_name() -> String {
     std::env::current_exe()
         .ok()
         .and_then(|p| p.file_stem().map(|s| s.to_string_lossy().to_string()))
-        .unwrap_or_else(|| "pmux".to_string())
+        .unwrap_or_else(|| "psmux".to_string())
         .to_lowercase()
         .replace(".exe", "")
 }
@@ -155,14 +155,14 @@ KEY BINDINGS (default prefix: Ctrl+B):
     prefix + q          Display pane numbers
 
 ENVIRONMENT VARIABLES:
-    PMUX_SESSION_NAME       Default session name
-    PMUX_DEFAULT_SESSION    Fallback default session name
-    PMUX_CURSOR_STYLE       Cursor style (block, underline, bar)
-    PMUX_CURSOR_BLINK       Cursor blinking (true/false)
+    PSMUX_SESSION_NAME       Default session name
+    PSMUX_DEFAULT_SESSION    Fallback default session name
+    PSMUX_CURSOR_STYLE       Cursor style (block, underline, bar)
+    PSMUX_CURSOR_BLINK       Cursor blinking (true/false)
 
 CONFIG FILES:
-    %USERPROFILE%\.pmux.conf     Main configuration file
-    %USERPROFILE%\.pmuxrc        Alternative configuration file
+    %USERPROFILE%\.psmux.conf     Main configuration file
+    %USERPROFILE%\.psmuxrc        Alternative configuration file
 
 EXAMPLES:
     {prog}                          Start or attach to default session
@@ -171,9 +171,9 @@ EXAMPLES:
     {prog} ls                       List all sessions
     {prog} split-window -h          Split current pane horizontally
 
-NOTE: pmux includes a 'tmux' alias - use 'pmux' or 'tmux' command, your choice!
+NOTE: psmux includes 'tmux' and 'pmux' aliases - use any command you prefer!
 
-For more information: https://github.com/marlocarlo/pmux
+For more information: https://github.com/marlocarlo/psmux
 "#, prog = prog);
 }
 
@@ -204,7 +204,7 @@ fn main() -> io::Result<()> {
         match args[1].as_str() {
             "ls" | "list-sessions" => {
                 let home = env::var("USERPROFILE").or_else(|_| env::var("HOME")).unwrap_or_default();
-                let dir = format!("{}\\.pmux", home);
+                let dir = format!("{}\\.psmux", home);
                 if let Ok(entries) = std::fs::read_dir(&dir) {
                     for e in entries.flatten() {
                         if let Some(name) = e.file_name().to_str() {
@@ -238,14 +238,14 @@ fn main() -> io::Result<()> {
                     .or_else(resolve_default_session_name)
                     .or_else(resolve_last_session_name)
                     .unwrap_or_else(|| "default".to_string());
-                env::set_var("PMUX_SESSION_NAME", name);
-                env::set_var("PMUX_REMOTE_ATTACH", "1");
+                env::set_var("PSMUX_SESSION_NAME", name);
+                env::set_var("PSMUX_REMOTE_ATTACH", "1");
             }
             "server" | "new-session" => {
                 let name = args.iter().position(|a| a == "-s").and_then(|i| args.get(i+1)).map(|s| s.clone()).unwrap_or_else(|| "default".to_string());
                 let detached = args.iter().any(|a| a == "-d");
                 if detached {
-                    let exe = std::env::current_exe().unwrap_or_else(|_| std::path::PathBuf::from("pmux"));
+                    let exe = std::env::current_exe().unwrap_or_else(|_| std::path::PathBuf::from("psmux"));
                     let mut cmd = std::process::Command::new(exe);
                     cmd.arg("server").arg("-s").arg(&name);
                     let _child = cmd.spawn().map_err(|e| io::Error::new(io::ErrorKind::Other, format!("failed to spawn server: {e}")))?;
@@ -266,18 +266,18 @@ fn main() -> io::Result<()> {
             _ => {}
         }
     }
-    if env::var("PMUX_ACTIVE").ok().as_deref() == Some("1") {
-        eprintln!("pmux: nested sessions are not allowed");
+    if env::var("PSMUX_ACTIVE").ok().as_deref() == Some("1") {
+        eprintln!("psmux: nested sessions are not allowed");
         return Ok(());
     }
-    env::set_var("PMUX_ACTIVE", "1");
+    env::set_var("PSMUX_ACTIVE", "1");
     let mut stdout = io::stdout();
     enable_raw_mode()?;
     execute!(stdout, EnterAlternateScreen, EnableBlinking, EnableMouseCapture)?;
     apply_cursor_style(&mut stdout)?;
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
-    let result = if env::var("PMUX_REMOTE_ATTACH").ok().as_deref() == Some("1") { run_remote(&mut terminal) } else { run(&mut terminal) };
+    let result = if env::var("PSMUX_REMOTE_ATTACH").ok().as_deref() == Some("1") { run_remote(&mut terminal) } else { run(&mut terminal) };
     disable_raw_mode()?;
     execute!(terminal.backend_mut(), DisableBlinking, DisableMouseCapture, LeaveAlternateScreen)?;
     terminal.show_cursor()?;
@@ -285,14 +285,14 @@ fn main() -> io::Result<()> {
 }
 
 fn run_remote(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<()> {
-    let name = env::var("PMUX_SESSION_NAME").unwrap_or_else(|_| "default".to_string());
+    let name = env::var("PSMUX_SESSION_NAME").unwrap_or_else(|_| "default".to_string());
     let home = env::var("USERPROFILE").or_else(|_| env::var("HOME")).unwrap_or_default();
-    let path = format!("{}\\.pmux\\{}.port", home, name);
+    let path = format!("{}\\.psmux\\{}.port", home, name);
     let port = std::fs::read_to_string(&path).ok().and_then(|s| s.trim().parse::<u16>().ok()).ok_or_else(|| io::Error::new(io::ErrorKind::Other, "no session"))?;
     let addr = format!("127.0.0.1:{}", port);
     let mut stream = std::net::TcpStream::connect(addr.clone())?;
     let _ = std::io::Write::write_all(&mut stream, b"client-attach\n");
-    let last_path = format!("{}\\.pmux\\last_session", home);
+    let last_path = format!("{}\\.psmux\\last_session", home);
     let _ = std::fs::write(&last_path, &name);
     let mut quit = false;
     let mut prefix_armed = false;
@@ -488,8 +488,8 @@ fn reap_children_placeholder() -> io::Result<bool> { Ok(false) }
 
 fn send_control(line: String) -> io::Result<()> {
     let home = env::var("USERPROFILE").or_else(|_| env::var("HOME")).unwrap_or_default();
-    let target = env::var("PMUX_TARGET_SESSION").ok().unwrap_or_else(|| "default".to_string());
-    let path = format!("{}\\.pmux\\{}.port", home, target);
+    let target = env::var("PSMUX_TARGET_SESSION").ok().unwrap_or_else(|| "default".to_string());
+    let path = format!("{}\\.psmux\\{}.port", home, target);
     let port = std::fs::read_to_string(&path).ok().and_then(|s| s.trim().parse::<u16>().ok()).ok_or_else(|| io::Error::new(io::ErrorKind::Other, "no session"))?;
     let addr = format!("127.0.0.1:{}", port);
     let mut stream = std::net::TcpStream::connect(addr)?;
@@ -499,8 +499,8 @@ fn send_control(line: String) -> io::Result<()> {
 
 fn send_control_with_response(line: String) -> io::Result<String> {
     let home = env::var("USERPROFILE").or_else(|_| env::var("HOME")).unwrap_or_default();
-    let target = env::var("PMUX_TARGET_SESSION").ok().unwrap_or_else(|| "default".to_string());
-    let path = format!("{}\\.pmux\\{}.port", home, target);
+    let target = env::var("PSMUX_TARGET_SESSION").ok().unwrap_or_else(|| "default".to_string());
+    let path = format!("{}\\.psmux\\{}.port", home, target);
     let port = std::fs::read_to_string(&path).ok().and_then(|s| s.trim().parse::<u16>().ok()).ok_or_else(|| io::Error::new(io::ErrorKind::Other, "no session"))?;
     let addr = format!("127.0.0.1:{}", port);
     let mut stream = std::net::TcpStream::connect(addr)?;
@@ -525,7 +525,7 @@ fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<()> 
         last_window_area: Rect { x: 0, y: 0, width: 0, height: 0 },
         mouse_enabled: true,
         paste_buffers: Vec::new(),
-        status_left: "pmux:#I".to_string(),
+        status_left: "psmux:#I".to_string(),
         status_right: "%H:%M".to_string(),
         copy_anchor: None,
         copy_pos: None,
@@ -533,7 +533,7 @@ fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<()> 
         binds: Vec::new(),
         control_rx: None,
         control_port: None,
-        session_name: env::var("PMUX_SESSION_NAME").unwrap_or_else(|_| "default".to_string()),
+        session_name: env::var("PSMUX_SESSION_NAME").unwrap_or_else(|_| "default".to_string()),
         attached_clients: 1,
         created_at: Local::now(),
         next_win_id: 1,
@@ -552,7 +552,7 @@ fn run(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<()> 
     let port = listener.local_addr()?.port();
     app.control_port = Some(port);
     let home = env::var("USERPROFILE").or_else(|_| env::var("HOME")).unwrap_or_default();
-    let dir = format!("{}\\.pmux", home);
+    let dir = format!("{}\\.psmux", home);
     let _ = std::fs::create_dir_all(&dir);
     let regpath = format!("{}\\{}.port", dir, app.session_name);
     let _ = std::fs::write(&regpath, port.to_string());
@@ -1241,8 +1241,8 @@ fn vt_to_color(c: vt100::Color) -> Color {
 }
 
 fn apply_cursor_style<W: Write>(out: &mut W) -> io::Result<()> {
-    let style = env::var("PMUX_CURSOR_STYLE").unwrap_or_else(|_| "bar".to_string());
-    let blink = env::var("PMUX_CURSOR_BLINK").unwrap_or_else(|_| "1".to_string()) != "0";
+    let style = env::var("PSMUX_CURSOR_STYLE").unwrap_or_else(|_| "bar".to_string());
+    let blink = env::var("PSMUX_CURSOR_BLINK").unwrap_or_else(|_| "1".to_string()) != "0";
     let code = match style.as_str() {
         "block" => if blink { 1 } else { 2 },
         "underline" => if blink { 3 } else { 4 },
@@ -1535,14 +1535,14 @@ fn expand_status(fmt: &str, app: &AppState, time_str: &str) -> String {
     let window = &app.windows[app.active_idx];
     s = s.replace("#I", &(app.active_idx + 1).to_string());
     s = s.replace("#W", &window.name);
-    s = s.replace("#S", "pmux");
+    s = s.replace("#S", "psmux");
     s = s.replace("%H:%M", time_str);
     s
 }
 
 fn load_config(app: &mut AppState) {
     let home = env::var("USERPROFILE").or_else(|_| env::var("HOME")).unwrap_or_default();
-    let path = format!("{}\\.pmux.conf", home);
+    let path = format!("{}\\.psmux.conf", home);
     if let Ok(content) = std::fs::read_to_string(&path) {
         for line in content.lines() {
             let l = line.trim();
@@ -1554,8 +1554,8 @@ fn load_config(app: &mut AppState) {
                         "status-left" => app.status_left = value.trim().to_string(),
                         "status-right" => app.status_right = value.trim().to_string(),
                         "mouse" => app.mouse_enabled = matches!(value.trim(), "on" | "true"),
-                        "cursor-style" => env::set_var("PMUX_CURSOR_STYLE", value.trim()),
-                        "cursor-blink" => env::set_var("PMUX_CURSOR_BLINK", if matches!(value.trim(), "on"|"true") { "1" } else { "0" }),
+                        "cursor-style" => env::set_var("PSMUX_CURSOR_STYLE", value.trim()),
+                        "cursor-blink" => env::set_var("PSMUX_CURSOR_BLINK", if matches!(value.trim(), "on"|"true") { "1" } else { "0" }),
                         "prefix" => {
                             if value.trim().eq_ignore_ascii_case("C-b") { app.prefix_key = (KeyCode::Char('b'), KeyModifiers::CONTROL); }
                             if value.trim().eq_ignore_ascii_case("C-a") { app.prefix_key = (KeyCode::Char('a'), KeyModifiers::CONTROL); }
@@ -1793,7 +1793,7 @@ fn run_server(session_name: String) -> io::Result<()> {
         last_window_area: Rect { x: 0, y: 0, width: 0, height: 0 },
         mouse_enabled: true,
         paste_buffers: Vec::new(),
-        status_left: "pmux:#I".to_string(),
+        status_left: "psmux:#I".to_string(),
         status_right: "%H:%M".to_string(),
         copy_anchor: None,
         copy_pos: None,
@@ -1816,7 +1816,7 @@ fn run_server(session_name: String) -> io::Result<()> {
     let port = listener.local_addr()?.port();
     app.control_port = Some(port);
     let home = env::var("USERPROFILE").or_else(|_| env::var("HOME")).unwrap_or_default();
-    let dir = format!("{}\\.pmux", home);
+    let dir = format!("{}\\.psmux", home);
     let _ = std::fs::create_dir_all(&dir);
     let regpath = format!("{}\\{}.port", dir, app.session_name);
     let _ = std::fs::write(&regpath, port.to_string());
@@ -2058,7 +2058,7 @@ fn infer_title_from_prompt(screen: &vt100::Screen, rows: u16, cols: u16) -> Opti
 
 fn resolve_last_session_name() -> Option<String> {
     let home = env::var("USERPROFILE").or_else(|_| env::var("HOME")).ok()?;
-    let dir = format!("{}\\.pmux", home);
+    let dir = format!("{}\\.psmux", home);
     let last = std::fs::read_to_string(format!("{}\\last_session", dir)).ok();
     if let Some(name) = last {
         let name = name.trim().to_string();
@@ -2080,18 +2080,18 @@ fn resolve_last_session_name() -> Option<String> {
 }
 
 fn resolve_default_session_name() -> Option<String> {
-    if let Ok(name) = env::var("PMUX_DEFAULT_SESSION") {
+    if let Ok(name) = env::var("PSMUX_DEFAULT_SESSION") {
         let home = env::var("USERPROFILE").or_else(|_| env::var("HOME")).ok()?;
-        let p = format!("{}\\.pmux\\{}.port", home, name);
+        let p = format!("{}\\.psmux\\{}.port", home, name);
         if std::path::Path::new(&p).exists() { return Some(name); }
     }
     let home = env::var("USERPROFILE").or_else(|_| env::var("HOME")).ok()?;
-    let candidates = [format!("{}\\.pmuxrc", home), format!("{}\\.pmux\\pmuxrc", home)];
+    let candidates = [format!("{}\\.psmuxrc", home), format!("{}\\.psmux\\pmuxrc", home)];
     for cfg in candidates.iter() {
         if let Ok(text) = std::fs::read_to_string(cfg) {
             let line = text.lines().find(|l| !l.trim().is_empty())?;
             let name = if let Some(rest) = line.strip_prefix("default-session ") { rest.trim().to_string() } else { line.trim().to_string() };
-            let p = format!("{}\\.pmux\\{}.port", home, name);
+            let p = format!("{}\\.psmux\\{}.port", home, name);
             if std::path::Path::new(&p).exists() { return Some(name); }
         }
     }

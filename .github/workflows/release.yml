@@ -28,19 +28,20 @@ jobs:
         shell: pwsh
         run: |
           $version = "${{ github.ref_name }}"
-          $dir = "pmux-windows-x86_64"
+          $dir = "psmux-windows-x86_64"
           New-Item -ItemType Directory -Path $dir -Force
+          Copy-Item "target/x86_64-pc-windows-msvc/release/psmux.exe" "$dir/psmux.exe"
           Copy-Item "target/x86_64-pc-windows-msvc/release/pmux.exe" "$dir/pmux.exe"
           Copy-Item "target/x86_64-pc-windows-msvc/release/tmux.exe" "$dir/tmux.exe"
           Copy-Item "README.md" "$dir/"
           Copy-Item "LICENSE" "$dir/"
-          Compress-Archive -Path $dir -DestinationPath "pmux-windows-x86_64.zip"
+          Compress-Archive -Path $dir -DestinationPath "psmux-windows-x86_64.zip"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: pmux-windows-x86_64
-          path: pmux-windows-x86_64.zip
+          name: psmux-windows-x86_64
+          path: psmux-windows-x86_64.zip
 
   release:
     name: Create Release
@@ -54,26 +55,27 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            pmux-windows-x86_64/pmux-windows-x86_64.zip
+            psmux-windows-x86_64/psmux-windows-x86_64.zip
           body: |
-            ## pmux ${{ github.ref_name }}
+            ## psmux ${{ github.ref_name }}
             
-            A PowerShell-focused terminal multiplexer for Windows.
+            Terminal multiplexer for Windows - tmux alternative for PowerShell and Windows Terminal.
             
             ### Installation
             
             **Using Cargo:**
             ```powershell
-            cargo install pmux
+            cargo install psmux
             ```
             
             **Manual Installation:**
-            1. Download `pmux-windows-x86_64.zip`
+            1. Download `psmux-windows-x86_64.zip`
             2. Extract to a folder in your PATH
-            3. Both `pmux` and `tmux` commands will be available
+            3. `psmux`, `pmux`, and `tmux` commands will all be available
             
             ### What's Included
-            - `pmux.exe` - Main executable
+            - `psmux.exe` - Main executable
+            - `pmux.exe` - Alias
             - `tmux.exe` - Alias for tmux compatibility
           draft: false
           prerelease: false

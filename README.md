@@ -1,12 +1,12 @@
-# pmux
+# psmux
 
 **A terminal multiplexer for Windows** — the tmux alternative you've been waiting for.
 
-pmux brings tmux-style terminal multiplexing to Windows natively. No WSL, no Cygwin, no compromises. Built in Rust for Windows Terminal, PowerShell, and cmd.exe.
+psmux brings tmux-style terminal multiplexing to Windows natively. No WSL, no Cygwin, no compromises. Built in Rust for Windows Terminal, PowerShell, and cmd.exe.
 
-> 💡 **Tip:** pmux includes a `tmux` alias, so you can use your muscle memory!
+> 💡 **Tip:** psmux includes `tmux` and `pmux` aliases, so you can use your muscle memory!
 
-## Why pmux?
+## Why psmux?
 
 If you've used tmux on Linux/macOS and wished you had something similar on Windows — this is it.
 
@@ -14,7 +14,7 @@ If you've used tmux on Linux/macOS and wished you had something similar on Windo
 - **Works everywhere** — Windows Terminal, PowerShell, cmd.exe, ConEmu, etc.
 - **No dependencies** — Single binary, just works
 - **tmux-compatible** — Same commands, same keybindings, zero learning curve
-- **`tmux` alias included** — Use `pmux` or `tmux` command, your choice
+- **Aliases included** — Use `psmux`, `pmux`, or `tmux` command, your choice
 
 ## Features
 
@@ -35,52 +35,53 @@ If you've used tmux on Linux/macOS and wished you had something similar on Windo
 ### Using Cargo (Recommended)
 
 ```powershell
-cargo install pmux
+cargo install psmux
 ```
 
-After installation, both `pmux` and `tmux` commands are available.
+After installation, `psmux`, `pmux`, and `tmux` commands are all available.
 
 ### Using Chocolatey
 
 ```powershell
-choco install pmux
+choco install psmux
 ```
 
 ### From GitHub Releases
 
-Download the latest `.zip` from [GitHub Releases](https://github.com/marlocarlo/pmux/releases) and add to your PATH.
+Download the latest `.zip` from [GitHub Releases](https://github.com/marlocarlo/psmux/releases) and add to your PATH.
 
 ### From Source
 
 ```powershell
-git clone https://github.com/marlocarlo/pmux.git
-cd pmux
+git clone https://github.com/marlocarlo/psmux.git
+cd psmux
 cargo install --path .
 ```
 
 ## Usage
 
-Use `pmux` or `tmux` — they're identical:
+Use `psmux`, `pmux`, or `tmux` — they're identical:
 
 ```powershell
 # Start a new session
+psmux
 pmux
 tmux
 
 # Start a named session
-pmux new-session -s work
+psmux new-session -s work
 tmux new-session -s work
 
 # List sessions
-pmux ls
+psmux ls
 tmux ls
 
 # Attach to a session
-pmux attach -t work
+psmux attach -t work
 tmux attach -t work
 
 # Show help
-pmux --help
+psmux --help
 tmux --help
 ```
 
@@ -109,7 +110,7 @@ Default prefix: `Ctrl+b` (same as tmux)
 
 ## Configuration
 
-Create `~/.pmux.conf`:
+Create `~/.psmux.conf`:
 
 ```
 # Change prefix key to Ctrl+a
@@ -133,13 +134,13 @@ MIT
 
 ---
 
-## About pmux
+## About psmux
 
-**pmux** (PowerShell Multiplexer) is a terminal multiplexer built specifically for Windows. It is an alternative to tmux for Windows users who want terminal multiplexing without WSL or Cygwin.
+**psmux** (PowerShell Multiplexer) is a terminal multiplexer built specifically for Windows. It is an alternative to tmux for Windows users who want terminal multiplexing without WSL or Cygwin.
 
 ### Keywords
 
-terminal multiplexer, tmux for windows, tmux alternative, tmux windows, windows terminal multiplexer, powershell multiplexer, split terminal windows, multiple terminals, terminal tabs, pane splitting, session management, windows terminal, powershell terminal, cmd terminal, rust terminal, console multiplexer, terminal emulator, windows console, cli tool, command line, devtools, developer tools, productivity, windows 10, windows 11
+terminal multiplexer, tmux for windows, tmux alternative, tmux windows, windows terminal multiplexer, powershell multiplexer, split terminal windows, multiple terminals, terminal tabs, pane splitting, session management, windows terminal, powershell terminal, cmd terminal, rust terminal, console multiplexer, terminal emulator, windows console, cli tool, command line, devtools, developer tools, productivity, windows 10, windows 11, psmux, pmux
 
 ### Related Projects
 
@@ -149,14 +150,14 @@ terminal multiplexer, tmux for windows, tmux alternative, tmux windows, windows 
 
 ### FAQ
 
-**Q: Is pmux cross-platform?**  
-A: No. pmux is built exclusively for Windows. For Linux/macOS, use tmux.
+**Q: Is psmux cross-platform?**  
+A: No. psmux is built exclusively for Windows. For Linux/macOS, use tmux.
 
-**Q: Does pmux work with Windows Terminal?**  
-A: Yes! pmux works great with Windows Terminal, PowerShell, cmd.exe, ConEmu, and other Windows terminal emulators.
+**Q: Does psmux work with Windows Terminal?**  
+A: Yes! psmux works great with Windows Terminal, PowerShell, cmd.exe, ConEmu, and other Windows terminal emulators.
 
-**Q: Why use pmux instead of Windows Terminal tabs?**  
-A: pmux offers session persistence (detach/reattach), synchronized input to multiple panes, and tmux-compatible keybindings.
+**Q: Why use psmux instead of Windows Terminal tabs?**  
+A: psmux offers session persistence (detach/reattach), synchronized input to multiple panes, and tmux-compatible keybindings.
 
-**Q: Can I use tmux commands with pmux?**  
-A: Yes! pmux includes a `tmux` alias. Commands like `tmux new-session`, `tmux attach`, `tmux ls` all work.
+**Q: Can I use tmux commands with psmux?**  
+A: Yes! psmux includes `tmux` and `pmux` aliases. Commands like `tmux new-session`, `tmux attach`, `tmux ls` all work.

@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
 $toolsDir = "$(Split-Path -Parent $MyInvocation.MyCommand.Definition)"
-$url64 = 'https://github.com/marlocarlo/pmux/releases/download/v0.1.0/pmux-windows-x86_64.zip'
+$url64 = 'https://github.com/marlocarlo/psmux/releases/download/v0.1.0/psmux-windows-x86_64.zip'
 
 $packageArgs = @{
   packageName    = $env:ChocolateyPackageName
@@ -13,9 +13,11 @@ $packageArgs = @{
 
 Install-ChocolateyZipPackage @packageArgs
 
-# Create shims for both pmux and tmux
-$pmuxPath = Join-Path $toolsDir "pmux-windows-x86_64\pmux.exe"
-$tmuxPath = Join-Path $toolsDir "pmux-windows-x86_64\tmux.exe"
+# Create shims for psmux, pmux, and tmux
+$psmuxPath = Join-Path $toolsDir "psmux-windows-x86_64\psmux.exe"
+$pmuxPath = Join-Path $toolsDir "psmux-windows-x86_64\pmux.exe"
+$tmuxPath = Join-Path $toolsDir "psmux-windows-x86_64\tmux.exe"
 
+Install-BinFile -Name "psmux" -Path $psmuxPath
 Install-BinFile -Name "pmux" -Path $pmuxPath
 Install-BinFile -Name "tmux" -Path $tmuxPath
