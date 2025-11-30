@@ -2,11 +2,11 @@
 name = "pmux"
 version = "0.1.0"
 edition = "2021"
-description = "A PowerShell-focused terminal multiplexer inspired by tmux, written in Rust"
+description = "Terminal multiplexer for Windows - tmux alternative for PowerShell and Windows Terminal"
 license = "MIT"
 repository = "https://github.com/marlocarlo/pmux"
 readme = "README.md"
-keywords = ["terminal", "multiplexer", "tmux", "tui", "cli", "powershell", "windows"]
+keywords = ["terminal", "multiplexer", "tmux", "windows", "powershell"]
 categories = ["command-line-utilities"]
 
 # Windows only
