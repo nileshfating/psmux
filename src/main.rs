@@ -1770,12 +1770,22 @@ fn run_remote(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Resu
         std::net::TcpStream::connect(&addr).ok()
     };
     
-    let mut server_alive = true;
-    
     loop {
-        if !server_alive {
+        // Fetch layout BEFORE draw - this also serves as liveness check
+        let root: LayoutJson = if let Ok(mut s) = std::net::TcpStream::connect(&addr) {
+            let _ = s.set_read_timeout(Some(Duration::from_millis(100)));
+            let _ = std::io::Write::write_all(&mut s, b"dump-layout\n");
+            let mut buf = String::new();
+            if std::io::Read::read_to_string(&mut s, &mut buf).is_ok() && !buf.is_empty() {
+                serde_json::from_str(&buf).unwrap_or(LayoutJson::Leaf { id: 0, rows: 0, cols: 0, cursor_row: 0, cursor_col: 0, content: Vec::new() })
+            } else {
+                // Server closed connection or sent no data - exit
+                break;
+            }
+        } else {
+            // Server connection failed - exit immediately
             break;
-        }
+        };
         
         terminal.draw(|f| {
             let area = f.size();
@@ -1784,17 +1794,6 @@ fn run_remote(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Resu
             if let Ok(mut cs) = std::net::TcpStream::connect(addr.clone()) {
                 let _ = std::io::Write::write_all(&mut cs, format!("client-size {} {}\n", chunks[0].width, chunks[0].height).as_bytes());
             }
-            // fetch layout json - also serves as liveness check
-            let root: LayoutJson = if let Ok(mut s) = std::net::TcpStream::connect(addr.clone()) {
-                let _ = std::io::Write::write_all(&mut s, b"dump-layout\n");
-                let mut buf = String::new();
-                let _ = std::io::Read::read_to_string(&mut s, &mut buf);
-                serde_json::from_str(&buf).unwrap_or(LayoutJson::Leaf { id: 0, rows: 0, cols: 0, cursor_row: 0, cursor_col: 0, content: Vec::new() })
-            } else {
-                // Server connection failed - mark for exit
-                server_alive = false;
-                LayoutJson::Leaf { id: 0, rows: 0, cols: 0, cursor_row: 0, cursor_col: 0, content: Vec::new() }
-            };
 
             fn render_json(f: &mut Frame, node: &LayoutJson, area: Rect) {
                 match node {
