@@ -669,6 +669,30 @@ fn main() -> io::Result<()> {
                 send_control("kill-session\n".to_string())?;
                 return Ok(());
             }
+            // kill-server - Kill all sessions
+            "kill-server" => {
+                let home = env::var("USERPROFILE").or_else(|_| env::var("HOME")).unwrap_or_default();
+                let psmux_dir = format!("{}\\.psmux", home);
+                if let Ok(entries) = std::fs::read_dir(&psmux_dir) {
+                    for entry in entries.flatten() {
+                        let path = entry.path();
+                        if path.extension().map(|e| e == "port").unwrap_or(false) {
+                            if let Ok(port_str) = std::fs::read_to_string(&path) {
+                                if let Ok(port) = port_str.trim().parse::<u16>() {
+                                    let addr = format!("127.0.0.1:{}", port);
+                                    // Send kill-session to each server
+                                    if let Ok(mut stream) = std::net::TcpStream::connect(&addr) {
+                                        let _ = std::io::Write::write_all(&mut stream, b"kill-session\n");
+                                    }
+                                }
+                            }
+                            // Remove the port file
+                            let _ = std::fs::remove_file(&path);
+                        }
+                    }
+                }
+                return Ok(());
+            }
             // has-session - Check if session exists (for scripting)
             "has-session" | "has" => {
                 // Get target from env (set from -t flag) or from remaining args
