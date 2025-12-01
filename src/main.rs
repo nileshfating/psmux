@@ -368,6 +368,36 @@ fn main() -> io::Result<()> {
     }
     
     match cmd {
+        // kill-server MUST be handled early before any potential fall-through
+        "kill-server" => {
+            let home = env::var("USERPROFILE").or_else(|_| env::var("HOME")).unwrap_or_default();
+            let psmux_dir = format!("{}\\.psmux", home);
+            let mut sessions_killed = 0;
+            if let Ok(entries) = std::fs::read_dir(&psmux_dir) {
+                for entry in entries.flatten() {
+                    let path = entry.path();
+                    if path.extension().map(|e| e == "port").unwrap_or(false) {
+                        if let Ok(port_str) = std::fs::read_to_string(&path) {
+                            if let Ok(port) = port_str.trim().parse::<u16>() {
+                                let addr = format!("127.0.0.1:{}", port);
+                                if let Ok(mut stream) = std::net::TcpStream::connect(&addr) {
+                                    let _ = std::io::Write::write_all(&mut stream, b"kill-session\n");
+                                    sessions_killed += 1;
+                                } else {
+                                    let _ = std::fs::remove_file(&path);
+                                }
+                            }
+                        } else {
+                            let _ = std::fs::remove_file(&path);
+                        }
+                    }
+                }
+            }
+            if sessions_killed > 0 {
+                std::thread::sleep(std::time::Duration::from_millis(100));
+            }
+            return Ok(());
+        }
         "ls" | "list-sessions" => {
                 let home = env::var("USERPROFILE").or_else(|_| env::var("HOME")).unwrap_or_default();
                 let dir = format!("{}\\.psmux", home);
@@ -667,40 +697,6 @@ fn main() -> io::Result<()> {
                     env::set_var("PSMUX_TARGET_SESSION", &t);
                 }
                 send_control("kill-session\n".to_string())?;
-                return Ok(());
-            }
-            // kill-server - Kill all sessions
-            "kill-server" => {
-                let home = env::var("USERPROFILE").or_else(|_| env::var("HOME")).unwrap_or_default();
-                let psmux_dir = format!("{}\\.psmux", home);
-                let mut sessions_killed = 0;
-                if let Ok(entries) = std::fs::read_dir(&psmux_dir) {
-                    for entry in entries.flatten() {
-                        let path = entry.path();
-                        if path.extension().map(|e| e == "port").unwrap_or(false) {
-                            if let Ok(port_str) = std::fs::read_to_string(&path) {
-                                if let Ok(port) = port_str.trim().parse::<u16>() {
-                                    let addr = format!("127.0.0.1:{}", port);
-                                    // Send kill-session to each server
-                                    if let Ok(mut stream) = std::net::TcpStream::connect(&addr) {
-                                        let _ = std::io::Write::write_all(&mut stream, b"kill-session\n");
-                                        sessions_killed += 1;
-                                    } else {
-                                        // Server not running, just remove stale port file
-                                        let _ = std::fs::remove_file(&path);
-                                    }
-                                }
-                            } else {
-                                // Can't read port file, remove it
-                                let _ = std::fs::remove_file(&path);
-                            }
-                        }
-                    }
-                }
-                if sessions_killed > 0 {
-                    // Give servers a moment to clean up
-                    std::thread::sleep(std::time::Duration::from_millis(100));
-                }
                 return Ok(());
             }
             // has-session - Check if session exists (for scripting)
